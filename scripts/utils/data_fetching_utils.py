@@ -6,7 +6,7 @@ import pandas as pd
 URL = 'https://rest.coinapi.io/'
 FMT = '%Y-%m-%dT%H:%M:%S'
 
-def get_api_key(text='../data/key.txt'):
+def get_api_key(text='../../data/key.txt'):
 
     with open(text) as file:
         key = file.read()
@@ -27,7 +27,13 @@ def time_in_string(time):
     Transforms a datetime to a time string
     '''
 
-    return time.isoformat()[:-7]
+    isoformat = time.isoformat()
+
+    if '.' in isoformat:
+        return isoformat[:-7]
+
+    else:
+        return isoformat
 
 def time_bounds(gap=6):
     '''
@@ -49,7 +55,8 @@ def time_bounds(gap=6):
 def get_data_time_delta(crypto='BTC', period='10MIN', time_delta=6):
 
     '''
-    time_delta is measured in hours
+    Returns data in the frequency of period for a range specified in time_delta,
+    until now. time_delta is measured in hours
     '''
 
     times = time_bounds(gap=time_delta)
@@ -68,10 +75,18 @@ def get_data_max_possible(crypto='BTC', period=10, end=time_in_string(datetime.n
     minutes_delta = period * 99990
     end_dt = time_in_datetime(end)
     start_dt = end_dt - timedelta(minutes=minutes_delta)
+    print(start_dt.isoformat())
     start = time_in_string(start_dt)
     frequency = str(period) + 'MIN'
 
-    data = get_date(crypto, frequency, start, end)
+    print('Start obs:', start)
+    print('Final obs:', end)
+
+    print('\nRetrieving data...')
+    data = get_data(crypto, frequency, start, end)
+
+    print('\nData retrieved')
+    print('Observations:', len(data))
 
     return data
 
@@ -79,6 +94,8 @@ def get_data_max_possible(crypto='BTC', period=10, end=time_in_string(datetime.n
 def get_data(crypto, period, start, end):
 
     '''
+    Retrieves data for a crypto, with a frequency of 'period', and
+    specified start and end times
     '''
 
     request_url = URL + 'v1/ohlcv/' + crypto + '/USD/history?period_id=' + \
@@ -95,6 +112,8 @@ def get_data(crypto, period, start, end):
 def calculate_observations(start, end, frequency):
 
     '''
+    Calculates the number of observations between start and end, given
+    the frequency
     '''
 
     obs = None
