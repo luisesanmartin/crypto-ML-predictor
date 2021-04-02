@@ -30,7 +30,7 @@ def time_in_string(time):
     isoformat = time.isoformat()
 
     if '.' in isoformat:
-        return isoformat[:-7]
+        return isoformat[:-7].split('.')[0]
 
     else:
         return isoformat
@@ -40,7 +40,7 @@ def time_bounds(gap=6):
     gap is measured in hours
     '''
     now = datetime.now()
-    before = (now - timedelta(hours=gap))
+    before = now - timedelta(hours=gap)
 
     upper_bound = time_in_string(now)
     lower_bound = time_in_string(now)
@@ -120,10 +120,13 @@ def calculate_observations(start, end, frequency):
     start_dt = time_in_datetime(start)
     end_dt = time_in_datetime(end)
 
-    if 'MIN' in frequency:
+    if type(frequency) == str:
+        if 'MIN' in frequency:
+            freq_minutes = int(frequency.split('M')[0])
 
-        freq_minutes = int(frequency.split('M')[0])
-        minutes = (end_dt - start_dt).total_seconds() / 60
-        return int((minutes / freq_minutes)) + 1
+    else:
+        freq_minutes = frequency
 
-    return obs
+    minutes = (end_dt - start_dt).total_seconds() / 60
+
+    return int((minutes / freq_minutes)) + 1
