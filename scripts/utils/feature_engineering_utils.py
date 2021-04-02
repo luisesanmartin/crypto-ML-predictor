@@ -128,16 +128,19 @@ def initial_train_X_brute_force(
             current_str
         )
 
-        i = len(df_X)
+        i_X = len(df_X)
         row_X = filter_subset(subset, price_cols)
-        df_X.loc[i] = row_X
-        row_Y = [current_str, label]
-        df_Y.loc[i] = row_Y
+        df_X.loc[i_X] = row_X
+
+        if label: # only append if label is not None
+            i_Y = len(df_Y)
+            row_Y = [current_str, label]
+            df_Y.loc[i_Y] = row_Y
 
         current = current - timedelta(minutes=freq)
 
-        if i % 500 == 0:
-            print('Progress: ' + str(round(i/n_obs*100)) + '%')
+        if i_X % 500 == 0:
+            print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
 
     return df_X, df_Y
 
@@ -165,3 +168,42 @@ def get_label(data_dic, time, time_range=30):
 
     else:
         return None
+
+def standardize(df, stats=False):
+
+    '''
+    Standardizes every column but the first, which is assumed to be "date"
+    If stats=True, returns the mean and std as well.
+    '''
+
+    df_sd = pd.DataFrame()
+    df_sd['time'] = df['time']
+
+    for col in df:
+        if col == 'time':
+            continue
+        else:
+            mean = df[col].mean()
+            sd  = df[col].std()
+            df_sd[col] = (df[col] - mean) / sd
+
+    if stats:
+        return df_sd, (mean, sd)
+
+    else:
+        return df_sd
+
+def match_dates(df_X, df_Y):
+
+    '''
+    compares X and Y datasets and excludes the dates (obs)
+    that are not included in both df
+    '''
+
+    dates_X = df_X['time']
+    dates_Y = df_Y['time']
+
+    df_X_matched = df_X.merge(df_Y['time'], how='inner', on='time')
+    df_Y_matched = df_Y.merge(df_X['time'], how='inner', on='time')
+
+    return df_X_matched, df_Y_matched

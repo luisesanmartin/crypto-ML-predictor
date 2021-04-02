@@ -28,7 +28,7 @@ data_dic = feu.transform_data_to_dict(data)
 for month, date in dates.items():
     print('\nArranging data for', month)
 
-    # Training X
+    # Training data
     df_X, df_Y = feu.initial_train_X_brute_force(
         data_dic,
         date,
@@ -36,9 +36,11 @@ for month, date in dates.items():
         time_range_train,
         freq
         )
-    export_file_X = '../../data/working/brute-force-approach/initial-train/' + month + '_X.csv'
-    export_file_Y = '../../data/working/brute-force-approach/initial-train/' + month + '_y.csv'
-    df_X.to_csv(export_file_X, index=False)
-    df_Y.to_csv(export_file_Y, index=False)
+    df_X_sd = feu.standardize(df_X)
 
-    # Training labels
+    df_X_sd, df_Y = feu.match_dates(df_X_sd, df_Y)
+
+    export_file_Y = '../../data/working/train/Y/' + month + '_Y.csv'
+    export_file_X_sd = '../../data/working/train/X/brute-force/' + month + '_X.csv'
+    df_X_sd.to_csv(export_file_X_sd, index=False)
+    df_Y.to_csv(export_file_Y, index=False)
