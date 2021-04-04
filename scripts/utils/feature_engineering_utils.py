@@ -17,6 +17,36 @@ def transform_data_to_dict(data):
 
     return data_dic
 
+def subset_for_testing(data_dic, start, freq=10, time_range=360):
+
+    '''
+    receives the data dict and start time and returns a set
+    of observations within the time range specified (forward-looking)
+    and in the frequencies defined
+    freq and time_range are defined in minutes
+    '''
+
+    start_td = data_fetching_utils.time_in_datetime(start)
+    end_td = start_td + timedelta(minutes=time_range)
+
+    current = start_td
+    data_return = []
+
+    while current <= end_td:
+
+        current_str = data_fetching_utils.time_in_string(current)
+
+        if current_str in data_dic:
+            data_return.append(data_dic[current_str])
+        else:
+            # if one of the times is not in the dic,
+            # we return a None
+            return None
+
+        current = current + timedelta(minutes=freq)
+
+    return data_return
+
 def subset_for_training(data_dic, end, freq=10, time_range=360):
 
     '''
@@ -71,7 +101,75 @@ def filter_subset(subset, cols):
 
     return data_return
 
-def initial_train_X_brute_force(
+def test_set_brute_force(
+    data_dic,
+    start,
+    time_range_obs=30,
+    time_range_test=360,
+    freq=10
+    ):
+
+    '''
+    time_range_obs is in days
+    time_range_test is in minutes
+    freq is in minutes
+    '''
+
+    # Time range for the observations
+    start_td = data_fetching_utils.time_in_datetime(start)
+    end_td = start_td + timedelta(days=time_range_obs)
+    end = data_fetching_utils.time_in_string(end_td)
+    n_obs = data_fetching_utils.calculate_observations(start, end, freq)
+
+    # Time range for the train X cols
+    end_obs_td = start_td + timedelta(minutes=time_range_test)
+    end_obs = data_fetching_utils.time_in_string(end_obs_td)
+    n_train = data_fetching_utils.calculate_observations(start, end_obs, freq)
+
+    # Cols of the df
+    cols = ['time']
+    price_cols = [
+        'price_close',
+        'price_high',
+        'price_low',
+        'volume_traded',
+        'trades_count'
+    ]
+    for i in range(n_train):
+        cols += [col+str(i+1) for col in price_cols]
+    df_X = pd.DataFrame(columns = cols)
+
+    # Building up the df
+    print('\nStarting to build up the df...')
+    print('Expected obs:', n_obs, '\n')
+    current = start_td
+    while current <= end_td:
+
+        current_str = data_fetching_utils.time_in_string(current)
+        subset = subset_for_testing(
+            data_dic,
+            current_str,
+            freq,
+            time_range_test
+        )
+        label = get_label(
+            data_dic,
+            current_str
+        )
+
+        if subset:
+            i_X = len(df_X)
+            row_X = filter_subset(subset, price_cols)
+            df_X.loc[i_X] = row_X
+
+        current = current + timedelta(minutes=freq)
+
+        if i_X % 500 == 0:
+            print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
+
+    return df_X
+
+def train_set_brute_force(
     data_dic,
     end,
     time_range_obs=360,
