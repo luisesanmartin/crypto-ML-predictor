@@ -29,7 +29,7 @@ for month, date in dates.items():
     print('\nArranging data for', month)
 
     # Test data
-    df_X = feu.test_set_brute_force(
+    df_X, df_Y = feu.test_set_brute_force(
         data_dic,
         date,
         time_range_obs,
@@ -38,5 +38,9 @@ for month, date in dates.items():
         )
     df_X_sd = feu.standardize(df_X)
 
+    df_X_sd, df_Y = feu.match_dates(df_X_sd, df_Y)
+
     export_file_X_sd = '../../data/working/test/X/brute-force/' + month + '_X.csv'
+    export_file_Y = '../../data/working/test/Y/' + month + '_Y.csv'
     df_X_sd.to_csv(export_file_X_sd, index=False)
+    df_Y.to_csv(export_file_Y, index=False)

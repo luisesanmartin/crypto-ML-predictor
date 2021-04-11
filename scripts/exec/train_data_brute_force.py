@@ -29,7 +29,7 @@ for month, date in dates.items():
     print('\nArranging data for', month)
 
     # Training data
-    df_X, df_Y = feu.initial_train_X_brute_force(
+    df_X, df_Y = feu.train_set_brute_force(
         data_dic,
         date,
         time_range_obs,

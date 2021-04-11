@@ -7,7 +7,7 @@ def train_xgboost(X_train, Y_train):
     '''
     '''
 
-    model = XGBClassifier()
+    model = XGBClassifier(verbosity = 0)
     model.fit(X_train, Y_train)
 
     return model

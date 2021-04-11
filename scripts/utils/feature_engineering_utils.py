@@ -138,6 +138,7 @@ def test_set_brute_force(
     for i in range(n_train):
         cols += [col+str(i+1) for col in price_cols]
     df_X = pd.DataFrame(columns = cols)
+    df_Y = pd.DataFrame(columns = ['time', 'label'])
 
     # Building up the df
     print('\nStarting to build up the df...')
@@ -157,17 +158,22 @@ def test_set_brute_force(
             current_str
         )
 
-        if subset:
+        if subset: # only append if label is not None
             i_X = len(df_X)
             row_X = filter_subset(subset, price_cols)
             df_X.loc[i_X] = row_X
+
+        if label is not None: # only append if label is not None
+            i_Y = len(df_Y)
+            row_Y = [current_str, label]
+            df_Y.loc[i_Y] = row_Y
 
         current = current + timedelta(minutes=freq)
 
         if i_X % 500 == 0:
             print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
 
-    return df_X
+    return df_X, df_Y
 
 def train_set_brute_force(
     data_dic,
@@ -230,7 +236,7 @@ def train_set_brute_force(
         row_X = filter_subset(subset, price_cols)
         df_X.loc[i_X] = row_X
 
-        if label: # only append if label is not None
+        if label is not None: # only append if label is not None
             i_Y = len(df_Y)
             row_Y = [current_str, label]
             df_Y.loc[i_Y] = row_Y
