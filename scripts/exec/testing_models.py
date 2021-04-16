@@ -42,7 +42,7 @@ for month in months:
     Y_pred_df['time'] = time_col
     Y_pred_df['scores'] = Y_pred
 
-    predictions = [round(value) for value in Y_pred]
+    predictions = [ml.get_prediction(value) for value in Y_pred]
     accuracy = accuracy_score(Y, predictions)
 
     print('Model for', month, 'has an accuracy of', str(accuracy))

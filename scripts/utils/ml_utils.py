@@ -11,3 +11,14 @@ def train_xgboost(X_train, Y_train):
     model.fit(X_train, Y_train)
 
     return model
+
+def get_prediction(score, threshold=0.5):
+
+    '''
+    '''
+
+    if score > threshold:
+        return 1
+
+    else:
+        return 0
