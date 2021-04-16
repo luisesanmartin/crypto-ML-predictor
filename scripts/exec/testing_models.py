@@ -40,7 +40,7 @@ for month in months:
     Y_pred = model.predict(X)
     Y_pred_df = pd.DataFrame()
     Y_pred_df['time'] = time_col
-    Y_pred_df['scores'] = Y_pred
+    Y_pred_df['predictions'] = Y_pred
 
     predictions = [ml.get_prediction(value) for value in Y_pred]
     accuracy = accuracy_score(Y, predictions)
