@@ -36,7 +36,7 @@ for month, date in dates.items():
         time_range_train,
         freq
         )
-    df_X_sd = feu.standardize(df_X)
+    df_X_sd, mean_sd_list = feu.standardize_df(df_X, stats_out=True)
 
     df_X_sd, df_Y = feu.match_dates(df_X_sd, df_Y)
 
@@ -44,3 +44,7 @@ for month, date in dates.items():
     export_file_X_sd = '../../data/working/train/X/brute-force/' + month + '_X.csv'
     df_X_sd.to_csv(export_file_X_sd, index=False)
     df_Y.to_csv(export_file_Y, index=False)
+
+    mean_sd_file = '../../data/working/train/X/brute-force/' + month + 'mean_sd.txt'
+    with open(mean_sd_file, 'wb') as f:
+        pickle.dump(mean_sd_list, f)

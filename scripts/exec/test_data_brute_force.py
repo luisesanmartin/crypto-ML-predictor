@@ -28,6 +28,11 @@ data_dic = feu.transform_data_to_dict(data)
 for month, date in dates.items():
     print('\nArranging data for', month)
 
+    # Loading means and sds
+    mean_sd_file = '../../data/working/train/X/brute-force/' + month + 'mean_sd.txt'
+    with open(mean_sd_file, 'rb') as f:
+        mean_sd_list = pickle.load(f)
+
     # Test data
     df_X, df_Y = feu.test_set_brute_force(
         data_dic,
@@ -36,7 +41,7 @@ for month, date in dates.items():
         time_range_train,
         freq
         )
-    df_X_sd = feu.standardize(df_X)
+    df_X_sd = feu.standardize_df(df_X, stats=mean_sd_list)
 
     df_X_sd, df_Y = feu.match_dates(df_X_sd, df_Y)
 

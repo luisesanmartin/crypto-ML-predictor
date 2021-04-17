@@ -273,29 +273,61 @@ def get_label(data_dic, time, time_range=30):
     else:
         return None
 
-def standardize(df, stats=False):
+def standardize_df(df, stats=None, stats_out=False):
 
     '''
-    Standardizes every column but the first, which is assumed to be "date"
-    If stats=True, returns the mean and std as well.
+    Standardizes every column but the time column
+    stats is a list of tuples with the mean and sd to be used for every column
+    if stats_out is True, returns a list of tuples with the mean and sd
     '''
 
     df_sd = pd.DataFrame()
     df_sd['time'] = df['time']
+    i = 0
+
+    if stats_out:
+        mean_sd_list = []
 
     for col in df:
         if col == 'time':
             continue
         else:
-            mean = df[col].mean()
-            sd  = df[col].std()
-            df_sd[col] = (df[col] - mean) / sd
+            if stats:
+                df_sd[col] = standardize(df[col], stats[i])
+            else:
+                if stats_out:
+                    standardized_results = standardize(df[col], stats_out=True)
+                    df_sd[col] = standardized_results[0]
+                    mean_sd_list.append(standardized_results[1])
+                else:
+                    df_sd[col] = standardize(df[col])
+            i += 1
 
-    if stats:
-        return df_sd, (mean, sd)
-
+    if stats_out:
+        return df_sd, mean_sd_list
     else:
         return df_sd
+
+def standardize(col, stats=None, stats_out=False):
+
+    '''
+    standardizes a column if stats is not provided.
+    stats is a tuple or list with the mean and sd to be used if provided
+    if stats_out is True, returns a tuple with the mean and sd
+    '''
+
+    if stats:
+        mean, sd = stats
+    else:
+        mean = col.mean()
+        sd = col.std()
+
+    rv = (col - mean) / sd
+
+    if stats_out:
+        return rv, (mean, sd)
+    else:
+        return rv
 
 def match_dates(df_X, df_Y):
 
