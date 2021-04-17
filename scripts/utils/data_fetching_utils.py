@@ -60,7 +60,7 @@ def get_data_time_delta(crypto='BTC', period='10MIN', time_delta=6):
     '''
 
     times = time_bounds(gap=time_delta)
-    data = get_data(crypto, period, times['lower_bound'], times['upper_bound'])
+    data = get_data(crypto, period, times['lower bound'], times['upper bound'])
 
     return data
 
