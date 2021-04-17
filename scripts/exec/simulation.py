@@ -7,6 +7,7 @@ import simulation_utils as sim
 import feature_engineering_utils as feu
 
 months = [
+    'mar2021',
     'feb2021',
     'jan2021',
     'dec2020',
@@ -68,4 +69,6 @@ for month in months:
     total_profits += profits
 
 print('\nTotal period simulated: ' + months[-1] + '-' + months[0])
+print('Months: ' + str(len(months)))
+print('Amount used: $' + str(amount))
 print('Total profits: $' + str(round(total_profits, 2)))
