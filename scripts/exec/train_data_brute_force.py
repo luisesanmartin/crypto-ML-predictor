@@ -5,6 +5,8 @@ sys.path.insert(1, '../utils')
 import feature_engineering_utils as feu
 
 dates = {
+    'apr2021': '2021-04-01T00:00:00',
+    "mar2021": "2021-03-01T00:00:00",
     'feb2021': '2021-02-01T00:00:00',
     'jan2021': '2021-01-01T00:00:00',
     'dec2020': '2020-12-01T00:00:00',
@@ -13,20 +15,19 @@ dates = {
     'sep2020': '2020-09-01T00:00:00',
     'aug2020': '2020-08-01T00:00:00',
     'jul2020': '2020-07-01T00:00:00',
-    'jun2020': '2020-06-01T00:00:00',
-    'may2020': '2020-05-01T00:00:00'
+    'jun2020': '2020-06-01T00:00:00'
 }
 time_range_obs = 30 # in days
 time_range_train = 60 # in minutes
 freq = 10 # granularity of obs: 10 minutes
 
-data_file = '../../data/raw/maxdata_BTC_10min_2021-03-17.txt'
+data_file = '../../data/raw/maxdata_BTC_10min_2021-04-01.txt'
 with open(data_file, 'rb') as f:
     data = pickle.load(f)
 data_dic = feu.transform_data_to_dict(data)
 
 for month, date in dates.items():
-    print('\nArranging data for', month)
+    print('\nArranging training data for', month, '(backward looking)')
 
     # Training data
     df_X, df_Y = feu.train_set_brute_force(

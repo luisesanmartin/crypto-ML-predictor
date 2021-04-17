@@ -5,6 +5,7 @@ sys.path.insert(1, '../utils')
 import feature_engineering_utils as feu
 
 dates = {
+    'mar2021': '2021-03-01T00:00:00',
     'feb2021': '2021-02-01T00:00:00',
     'jan2021': '2021-01-01T00:00:00',
     'dec2020': '2020-12-01T00:00:00',
@@ -26,7 +27,7 @@ with open(data_file, 'rb') as f:
 data_dic = feu.transform_data_to_dict(data)
 
 for month, date in dates.items():
-    print('\nArranging data for', month)
+    print('\nArranging testing data for', month, '(forward looking)')
 
     # Loading means and sds
     mean_sd_file = '../../data/working/train/X/brute-force/' + month + 'mean_sd.txt'
