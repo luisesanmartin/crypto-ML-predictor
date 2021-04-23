@@ -293,7 +293,7 @@ def standardize_df(df, stats=None, stats_out=False):
             continue
         else:
             if stats:
-                df_sd[col] = standardize(df[col], stats[i])
+                df_sd[col] = pd.to_numeric(standardize(df[col], stats[i]))
             else:
                 if stats_out:
                     standardized_results = standardize(df[col], stats_out=True)
@@ -343,3 +343,34 @@ def match_dates(df_X, df_Y):
     df_Y_matched = df_Y.merge(df_X['time'], how='inner', on='time')
 
     return df_X_matched, df_Y_matched
+
+def arrange_deployment_data(data, price_cols, freq, time_delta):
+
+    '''
+    arranges data for deployment
+    data: data as we get it from CoinAPI
+    price_cols: list of column names that will contain our data
+    freq: frequency of observations, in minutes
+    time_delta: time we're retrieving data from, in hours
+    '''
+
+    # Number of times the price_cols will be repeated
+    end = data[-1]['time_period_end'][:19]
+    start = data[0]['time_period_end'][:19]
+    n_col_iterations = data_fetching_utils.calculate_observations(start, end, freq)
+
+    # Data in reversed order, so most recent obs are first
+    data_rev = data[::-1]
+    relevant_data = filter_subset(data_rev, price_cols)
+
+    # Cols
+    cols = ['time']
+    for i in range(n_col_iterations):
+        cols += [col+str(i+1) for col in price_cols]
+
+    # Dataframe
+    df = pd.DataFrame(columns = cols)
+    df.loc[0] = relevant_data
+    # Note: this is not standardized
+
+    return df

@@ -43,7 +43,7 @@ def time_bounds(gap=6):
     before = now - timedelta(hours=gap)
 
     upper_bound = time_in_string(now)
-    lower_bound = time_in_string(now)
+    lower_bound = time_in_string(before)
 
     rv = {
         'upper bound': upper_bound,
