@@ -8,6 +8,7 @@ import ml_utils as ml
 import feature_engineering_utils as feu
 
 months = [
+    'apr2021',
     'mar2021',
     'feb2021',
     'jan2021',
@@ -17,12 +18,11 @@ months = [
     'sep2020',
     'aug2020',
     'jul2020',
-    'jun2020',
-    'may2020'
+    'jun2020'
 ]
-x_path = '../../data/working/test/X/brute-force/'
+x_path = '../../data/working/test/X/'
 y_path = '../../data/working/test/Y/'
-classifiers_path = '../../classifiers/brute_force/'
+classifiers_path = '../../classifiers/'
 predictions_path = '../../data/working/test/predictions/'
 
 for month in months:
