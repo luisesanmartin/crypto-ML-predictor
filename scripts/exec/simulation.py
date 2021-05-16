@@ -6,9 +6,6 @@ sys.path.insert(1, '../utils')
 import simulation_utils as sim
 import feature_engineering_utils as feu
 
-months = ['apr2021']
-
-'''
 months = [
     'mar2021',
     'feb2021',
@@ -19,17 +16,17 @@ months = [
     'sep2020',
     'aug2020',
     'jul2020',
-    'jun2020'
+    'jun2020',
+    'may2020'
 ]
-'''
 
 y_path = '../../data/working/test/Y/'
 predictions_path = '../../data/working/test/predictions/'
-time_length = 10 # in minutes
+time_length = 30 # in minutes
 amount = 100 # in dollars
 total_profits = 0
 
-data_file = '../../data/raw/data_BTC_10min_2021-03-01_2021-05-01.txt'
+data_file = '../../data/raw/maxdata_BTC_10min_2021-03-17.txt'
 with open(data_file, 'rb') as f:
     data = pickle.load(f)
 data_dic = feu.transform_data_to_dict(data)

@@ -6,7 +6,6 @@ sys.path.insert(1, '../utils')
 import ml_utils as ml
 
 months = [
-    'may2021',
     'apr2021',
     'mar2021',
     'feb2021',
@@ -17,11 +16,12 @@ months = [
     'sep2020',
     'aug2020',
     'jul2020',
-    'jun2020'
+    'jun2020',
+    'may2020'
 ]
-x_path = '../../data/working/train/X/'
+x_path = '../../data/working/train/X/brute-force/'
 y_path = '../../data/working/train/Y/'
-export_path = '../../classifiers/'
+export_path = '../../classifiers/brute_force/'
 
 for month in months:
 

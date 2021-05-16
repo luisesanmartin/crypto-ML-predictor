@@ -5,12 +5,6 @@ sys.path.insert(1, '../utils')
 import feature_engineering_utils as feu
 
 dates = {
-    'may2021': '2021-05-01T00:00:00',
-    'apr2021': '2021-04-01T00:00:00'
-}
-
-'''
-dates = {
     'apr2021': '2021-04-01T00:00:00',
     "mar2021": "2021-03-01T00:00:00",
     'feb2021': '2021-02-01T00:00:00',
@@ -23,15 +17,11 @@ dates = {
     'jul2020': '2020-07-01T00:00:00',
     'jun2020': '2020-06-01T00:00:00'
 }
-'''
-
 time_range_obs = 30 # in days
 time_range_train = 60 # in minutes
-obs_freq = 10 # granularity of obs
-prediction_freq = 10 # frequency of predictions
+freq = 10 # granularity of obs: 10 minutes
 
-#data_file = '../../data/raw/maxdata_BTC_10min_2021-04-01.txt'
-data_file = '../../data/raw/data_BTC_10min_2021-03-01_2021-05-01.txt'
+data_file = '../../data/raw/maxdata_BTC_10min_2021-04-01.txt'
 with open(data_file, 'rb') as f:
     data = pickle.load(f)
 data_dic = feu.transform_data_to_dict(data)
@@ -45,18 +35,17 @@ for month, date in dates.items():
         date,
         time_range_obs,
         time_range_train,
-        obs_freq,
-        prediction_freq
+        freq
         )
     df_X_sd, mean_sd_list = feu.standardize_df(df_X, stats_out=True)
 
     df_X_sd, df_Y = feu.match_dates(df_X_sd, df_Y)
 
     export_file_Y = '../../data/working/train/Y/' + month + '_Y.csv'
-    export_file_X_sd = '../../data/working/train/X/' + month + '_X.csv'
+    export_file_X_sd = '../../data/working/train/X/brute-force/' + month + '_X.csv'
     df_X_sd.to_csv(export_file_X_sd, index=False)
     df_Y.to_csv(export_file_Y, index=False)
 
-    mean_sd_file = '../../data/working/train/X/' + month + 'mean_sd.txt'
+    mean_sd_file = '../../data/working/train/X/brute-force/' + month + 'mean_sd.txt'
     with open(mean_sd_file, 'wb') as f:
         pickle.dump(mean_sd_list, f)

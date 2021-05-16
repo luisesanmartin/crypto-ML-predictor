@@ -106,27 +106,25 @@ def test_set_brute_force(
     start,
     time_range_obs=30,
     time_range_test=360,
-    obs_freq=10,
-    prediction_freq=30
+    freq=10
     ):
 
     '''
     time_range_obs is in days
     time_range_test is in minutes
-    obs_freq is in minutes
-    prediction_freq is in minutes
+    freq is in minutes
     '''
 
     # Time range for the observations
     start_td = data_fetching_utils.time_in_datetime(start)
     end_td = start_td + timedelta(days=time_range_obs)
     end = data_fetching_utils.time_in_string(end_td)
-    n_obs = data_fetching_utils.calculate_observations(start, end, obs_freq)
+    n_obs = data_fetching_utils.calculate_observations(start, end, freq)
 
     # Time range for the train X cols
     end_obs_td = start_td + timedelta(minutes=time_range_test)
     end_obs = data_fetching_utils.time_in_string(end_obs_td)
-    n_train = data_fetching_utils.calculate_observations(start, end_obs, obs_freq)
+    n_train = data_fetching_utils.calculate_observations(start, end_obs, freq)
 
     # Cols of the df
     cols = ['time']
@@ -152,13 +150,12 @@ def test_set_brute_force(
         subset = subset_for_testing(
             data_dic,
             current_str,
-            obs_freq,
+            freq,
             time_range_test
         )
         label = get_label(
             data_dic,
-            current_str,
-            prediction_freq
+            current_str
         )
 
         if subset: # only append if label is not None
@@ -171,7 +168,7 @@ def test_set_brute_force(
             row_Y = [current_str, label]
             df_Y.loc[i_Y] = row_Y
 
-        current = current + timedelta(minutes=obs_freq)
+        current = current + timedelta(minutes=freq)
 
         if i_X % 500 == 0:
             print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
@@ -183,27 +180,25 @@ def train_set_brute_force(
     end,
     time_range_obs=360,
     time_range_train=360,
-    obs_freq=10,
-    prediction_freq=30
+    freq=10
     ):
 
     '''
     time_range_obs is in days
     time_range_train is in minutes
-    obs_freq is in minutes
-    prediction_freq is in minutes
+    freq is in minutes
     '''
 
     # Time range for the observations
     end_td = data_fetching_utils.time_in_datetime(end)
     start_td = end_td - timedelta(days=time_range_obs)
     start = data_fetching_utils.time_in_string(start_td)
-    n_obs = data_fetching_utils.calculate_observations(start, end, obs_freq)
+    n_obs = data_fetching_utils.calculate_observations(start, end, freq)
 
     # Time range for the train X cols
     start_obs_td = end_td - timedelta(minutes=time_range_train)
     start_obs = data_fetching_utils.time_in_string(start_obs_td)
-    n_train = data_fetching_utils.calculate_observations(start_obs, end, obs_freq)
+    n_train = data_fetching_utils.calculate_observations(start_obs, end, freq)
 
     # Train cols of the df
     cols = ['time']
@@ -229,13 +224,12 @@ def train_set_brute_force(
         subset = subset_for_training(
             data_dic,
             current_str,
-            obs_freq,
+            freq,
             time_range_train
         )
         label = get_label(
             data_dic,
-            current_str,
-            prediction_freq
+            current_str
         )
 
         i_X = len(df_X)
@@ -247,7 +241,7 @@ def train_set_brute_force(
             row_Y = [current_str, label]
             df_Y.loc[i_Y] = row_Y
 
-        current = current - timedelta(minutes=obs_freq)
+        current = current - timedelta(minutes=freq)
 
         if i_X % 500 == 0:
             print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
