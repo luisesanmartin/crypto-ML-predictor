@@ -17,6 +17,25 @@ def transform_data_to_dict(data):
 
     return data_dic
 
+def latest_time(data_dic):
+
+    '''
+    Evaluates every key of the input data dictionary and returns
+    the latest time
+    '''
+
+    latest = None
+
+    for time_str in data_dic:
+        time = data_fetching_utils.time_in_datetime(time_str)
+
+        if latest == None or time > latest:
+            latest = time
+
+    time_str = data_fetching_utils.time_in_string(latest)
+
+    return time_str
+
 def subset_for_testing(data_dic, start, freq=10, time_range=360):
 
     '''
