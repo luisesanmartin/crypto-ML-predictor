@@ -4,14 +4,14 @@ import pickle
 sys.path.insert(1, '../utils')
 import feature_engineering_utils as feu
 
+'''
 dates = {
     'apr2021': '2021-04-01T00:00:00',
     'mar2021': '2021-03-01T00:00:00'
 }
-
 '''
+
 dates = {
-    'mar2021': '2021-03-01T00:00:00',
     'feb2021': '2021-02-01T00:00:00',
     'jan2021': '2021-01-01T00:00:00',
     'dec2020': '2020-12-01T00:00:00',
@@ -22,11 +22,10 @@ dates = {
     'jul2020': '2020-07-01T00:00:00',
     'jun2020': '2020-06-01T00:00:00'
 }
-'''
 
 time_range_obs = 30 # in days
 time_range_train = 60 # in minutes
-freq = 10 # granularity of obs: 10 minutes
+freq = 30 # granularity of obs: 10 minutes
 
 data_file = '../../data/raw/maxdata_BTC_10min_2021-04-01.txt'
 #data_file = '../../data/raw/data_BTC_10min_2021-03-01_2021-05-01.txt'

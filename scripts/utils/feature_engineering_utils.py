@@ -161,6 +161,7 @@ def test_set_brute_force(
             prediction_freq
         )
 
+        i_X = None
         if subset: # only append if label is not None
             i_X = len(df_X)
             row_X = filter_subset(subset, price_cols)
@@ -173,8 +174,9 @@ def test_set_brute_force(
 
         current = current + timedelta(minutes=obs_freq)
 
-        if i_X % 500 == 0:
-            print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
+        if i_X:
+            if i_X % 500 == 0:
+                print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
 
     return df_X, df_Y
 
