@@ -8,6 +8,7 @@ import ml_utils as ml
 import feature_engineering_utils as feu
 
 months = [
+    'may2021',
     'apr2021',
     'mar2021',
     'feb2021',
