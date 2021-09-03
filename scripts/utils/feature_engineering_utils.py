@@ -89,14 +89,14 @@ def subset_for_training(data_dic, end, freq=10, time_range=360):
             data_return.append(data_dic[current_str])
 
         else: # we take the data of the most recent previous obs
-            print('\nWarning: Data for obs ' + current_str + ' not found')
+            #print('\nWarning: Data for obs ' + current_str + ' not found')
             not_in_dic = True
             freq2 = 0 + freq
             while not_in_dic:
                 current2 = current - timedelta(minutes=freq2)
                 current_str2 = data_fetching_utils.time_in_string(current2)
                 if current_str2 in data_dic:
-                    print('Using data from ' + current_str2 + ' instead')
+                    #print('Using data from ' + current_str2 + ' instead')
                     data_return.append(data_dic[current_str2])
                     not_in_dic = False
                 else:
