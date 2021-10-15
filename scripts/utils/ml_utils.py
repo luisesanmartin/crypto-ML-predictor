@@ -30,8 +30,9 @@ PARAMETERS = {
                    'random_state': [793402]},
     'Logistic regression': {'C': [0.001, 0.01, 0.1, 1, 10],
                             'penalty': ['l1', 'l2'],
-                            'random_state': [793402]},
-    'GaussianNB': {'priors': None}
+                            'random_state': [793402],
+                            'solver': ['liblinear']},
+    'Gaussian NB': {'priors': [None]}
 }
 
 def train_xgboost(X_train, Y_train):
