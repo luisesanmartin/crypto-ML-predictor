@@ -66,7 +66,7 @@ def subset_for_testing(data_dic, start, freq=10, time_range=360):
 
     return data_return
 
-def subset_for_training(data_dic, end, freq=10, time_range=360):
+def subset_for_training(data_dic, end, freq=10, time_range=60):
 
     '''
     receives the data dict and an end time and returns a set
@@ -121,7 +121,7 @@ def filter_subset(subset, cols):
 
     return data_return
 
-#def 
+#def
 
 def test_set_brute_force(
     data_dic,
@@ -205,8 +205,8 @@ def test_set_brute_force(
 def train_set_brute_force(
     data_dic,
     end,
-    time_range_obs=360,
-    time_range_train=360,
+    time_range_obs=30,
+    time_range_train=60,
     obs_freq=10,
     prediction_freq=30
     ):

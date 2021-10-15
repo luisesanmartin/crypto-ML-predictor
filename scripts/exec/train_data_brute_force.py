@@ -5,11 +5,9 @@ sys.path.insert(1, '../utils')
 import feature_engineering_utils as feu
 
 dates = {
+    'oct2021': '2021-10-01T00:00:00',
     'sep2021': '2021-09-01T00:00:00',
-    'aug2021': '2021-08-01T00:00:00',
-    'jul2021': '2021-07-01T00:00:00',
-    'jun2021': '2021-06-01T00:00:00',
-    'may2021': '2021-05-01T00:00:00'
+    'aug2021': '2021-08-01T00:00:00'
 }
 
 time_range_obs = 30 # in days
