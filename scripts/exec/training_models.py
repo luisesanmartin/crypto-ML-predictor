@@ -6,18 +6,9 @@ sys.path.insert(1, '../utils')
 import ml_utils as ml
 
 months = [
-    'may2021',
-    'apr2021',
-    'mar2021',
-    'feb2021',
-    'jan2021',
-    'dec2020',
-    'nov2020',
-    'oct2020',
-    'sep2020',
-    'aug2020',
-    'jul2020',
-    'jun2020'
+    'oct2021',
+    'sep2021',
+    'aug2021'
 ]
 x_path = '../../data/working/train/X/'
 y_path = '../../data/working/train/Y/'
