@@ -4,22 +4,12 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 
 sys.path.insert(1, '../utils')
-import ml_utils as ml
+import ml_utils as mlu
 import feature_engineering_utils as feu
 
 months = [
-    'may2021',
-    'apr2021',
-    'mar2021',
-    'feb2021',
-    'jan2021',
-    'dec2020',
-    'nov2020',
-    'oct2020',
-    'sep2020',
-    'aug2020',
-    'jul2020',
-    'jun2020'
+    'sep2021',
+    'aug2021'
 ]
 x_path = '../../data/working/test/X/'
 y_path = '../../data/working/test/Y/'
@@ -42,9 +32,10 @@ for month in months:
     Y_pred = model.predict(X)
     Y_pred_df = pd.DataFrame()
     Y_pred_df['time'] = time_col
-    Y_pred_df['predictions'] = Y_pred
+    Y_pred_df['predicted'] = Y_pred
+    Y_pred_df['actual'] = Y
 
-    predictions = [ml.get_prediction(value) for value in Y_pred]
+    predictions = [mlu.get_prediction(value) for value in Y_pred]
     accuracy = accuracy_score(Y, predictions)
 
     print('Model for', month, 'has an accuracy of', str(accuracy))
