@@ -8,10 +8,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import ParameterGrid
 
 # list of classifiers
-CLASSIFIERS = {
+MODELS = {
     'Random forest': RandomForestClassifier,
     'Linear SVC': LinearSVC,
     'Logistic regression': LogisticRegression,

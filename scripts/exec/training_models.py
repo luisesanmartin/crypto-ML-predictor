@@ -1,12 +1,12 @@
 import sys
 import pickle
 import pandas as pd
+from sklearn.model_selection import ParameterGrid
 
 sys.path.insert(1, '../utils')
-import ml_utils as ml
+import ml_utils as mlu
 
 months = [
-    'oct2021',
     'sep2021',
     'aug2021'
 ]
@@ -19,12 +19,20 @@ for month in months:
     X = pd.read_csv(x_path+month+'_X.csv')
     X = X.drop('time', 1)
     Y = pd.read_csv(y_path+month+'_Y.csv')
-    Y = Y.drop('time', 1)
+    Y = Y['label']
 
-    model = ml.train_xgboost(X, Y)
-    file = export_path + month + 'xgb.txt'
+    for model in mlu.MODELS:
 
-    with open(file, 'wb') as f:
-        pickle.dump(model, f)
+        parameters_list = list(ParameterGrid(mlu.PARAMETERS[model]))
 
-    print('XGB model for', month, 'finished')
+        for i, parameters in enumerate(parameters_list):
+
+            clf = mlu.MODELS[model](**parameters)
+            clf = clf.fit(X, Y)
+
+            file = export_path + month + model + str(i) + '.pickle'
+
+            with open(file, 'wb') as f:
+                pickle.dump(clf, f)
+
+            print('Saved model', model+str(i),'for', month)
