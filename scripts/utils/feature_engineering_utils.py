@@ -2,6 +2,27 @@ from datetime import timedelta
 import data_fetching_utils
 import pandas as pd
 
+# Prediction features column names
+COLS = ['time']
+COLS += [
+        'price_increased10',
+        'price_increased20',
+        'price_increased30',
+        'price_increased40',
+        'price_increased50',
+        'price_increased60',
+        'price_increased_all_60',
+        'price_increased_all_30',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday'
+    ]
+COLS += ['hour_'+str(i) for i in range(24)]
+
 def transform_data_to_dict(data):
 
     '''
@@ -121,8 +142,6 @@ def filter_subset(subset, cols):
 
     return data_return
 
-#def
-
 def test_set_brute_force(
     data_dic,
     start,
@@ -150,46 +169,28 @@ def test_set_brute_force(
     end_obs = data_fetching_utils.time_in_string(end_obs_td)
     n_train = data_fetching_utils.calculate_observations(start, end_obs, obs_freq)
 
-    # Cols of the df
-    cols = ['time']
-    price_cols = [
-        'price_close',
-        'price_high',
-        'price_low',
-        'volume_traded',
-        'trades_count'
-    ]
-    for i in range(n_train):
-        cols += [col+str(i+1) for col in price_cols]
-    df_X = pd.DataFrame(columns = cols)
+    # Initializing dfs
+    df_X = pd.DataFrame(columns = COLS)
     df_Y = pd.DataFrame(columns = ['time', 'label'])
 
     # Building up the df
     print('\nStarting to build up the df...')
-    print('Expected obs:', n_obs, '\n')
     current = start_td
     while current <= end_td:
 
         current_str = data_fetching_utils.time_in_string(current)
-        subset = subset_for_testing(
-            data_dic,
-            current_str,
-            obs_freq,
-            time_range_test
-        )
         label = get_label(
             data_dic,
             current_str,
             prediction_freq
         )
 
-        i_X = None
-        if subset: # only append if label is not None
+        if label is not None: # only append if label is not None
+
             i_X = len(df_X)
-            row_X = filter_subset(subset, price_cols)
+            row_X = build_row(data_dic, current_str)
             df_X.loc[i_X] = row_X
 
-        if label is not None: # only append if label is not None
             i_Y = len(df_Y)
             row_Y = [current_str, label]
             df_Y.loc[i_Y] = row_Y
@@ -201,6 +202,43 @@ def test_set_brute_force(
                 print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
 
     return df_X, df_Y
+
+def price_increased(data_dic, time_now, minutes):
+
+    '''
+    Checks if the price increased from the price X minutes ago
+    '''
+
+    end_time = data_fetching_utils.time_in_datetime(time_now)
+    start_time = end_time - timedelta(minutes=minutes)
+    time_before = data_fetching_utils.time_in_string(start_time)
+
+    price_now = data_dic[time_now]['price_close']
+    price_before = data_dic[time_before]['price_close']
+
+    if price_now > price_before:
+        return 1
+    else:
+        return 0
+
+def day_of_week(time):
+
+    '''
+    Returns the day of the week as an integer.
+    Ranges from Monday (0) to Sunday (6)
+    '''
+
+    time2 = data_fetching_utils.time_in_datetime(time)
+
+    return time2.weekday()
+
+def time_of_day(time):
+
+    '''
+    Returns the time of day as an integer (0-24)
+    '''
+
+    return int(time[11:13])
 
 def train_set_brute_force(
     data_dic,
@@ -229,33 +267,16 @@ def train_set_brute_force(
     start_obs = data_fetching_utils.time_in_string(start_obs_td)
     n_train = data_fetching_utils.calculate_observations(start_obs, end, obs_freq)
 
-    # Train cols of the df
-    cols = ['time']
-    price_cols = [
-        'price_close',
-        'price_high',
-        'price_low',
-        'volume_traded',
-        'trades_count'
-    ]
-    for i in range(n_train):
-        cols += [col+str(i+1) for col in price_cols]
-    df_X = pd.DataFrame(columns = cols)
+    # Initializing dfs
+    df_X = pd.DataFrame(columns = COLS)
     df_Y = pd.DataFrame(columns = ['time', 'label'])
 
     # Building up the df
     print('\nStarting to build up the df...')
-    print('Expected obs:', n_obs, '\n')
     current = end_td
     while current >= start_td:
 
         current_str = data_fetching_utils.time_in_string(current)
-        subset = subset_for_training(
-            data_dic,
-            current_str,
-            obs_freq,
-            time_range_train
-        )
         label = get_label(
             data_dic,
             current_str,
@@ -266,7 +287,7 @@ def train_set_brute_force(
 
             # X dataset:
             i_X = len(df_X)
-            row_X = filter_subset(subset, price_cols)
+            row_X = build_row(data_dic, current_str)
             df_X.loc[i_X] = row_X
 
             # Y dataset:
@@ -280,6 +301,36 @@ def train_set_brute_force(
             print('Progress: ' + str(round(i_X/n_obs*100)) + '%')
 
     return df_X, df_Y
+
+def build_row(data_dic, time):
+
+    '''
+    Builds a row of data for the corresponding time
+    '''
+
+    # Price increaces every XX minutes
+    x1 = price_increased(data_dic, time, 10)
+    x2 = price_increased(data_dic, time, 20)
+    x3 = price_increased(data_dic, time, 30)
+    x4 = price_increased(data_dic, time, 40)
+    x5 = price_increased(data_dic, time, 50)
+    x6 = price_increased(data_dic, time, 60)
+
+    # Price increased every 10 min for the last hour and half hour
+    x7 = x1 * x2 * x3 * x4 * x5 * x6
+    x8 = x1 * x2 * x3
+
+    # Dummies for each day of week
+    day = day_of_week(time)
+    day_dummies = [1 if x == day else 0 for x in range(7)]
+
+    # Dummies for each hour of the day
+    hour = time_of_day(time)
+    hour_dummies = [1 if x == hour else 0 for x in range(24)]
+
+    row = [time, x1, x2, x3, x4, x5, x6, x7, x8] + day_dummies + hour_dummies
+
+    return row
 
 def get_label(data_dic, time, time_range=30):
 
