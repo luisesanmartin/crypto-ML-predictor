@@ -27,12 +27,12 @@ for month in months:
 
         for i, parameters in enumerate(parameters_list):
 
+            print('Model', model+str(i),'for', month)
+
             clf = mlu.MODELS[model](**parameters)
             clf = clf.fit(X, Y)
 
-            file = export_path + month + model + str(i) + '.pickle'
+            file = export_path + month + '_' + model + str(i) + '.pickle'
 
             with open(file, 'wb') as f:
                 pickle.dump(clf, f)
-
-            print('Saved model', model+str(i),'for', month)
