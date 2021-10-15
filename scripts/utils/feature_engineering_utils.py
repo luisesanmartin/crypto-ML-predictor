@@ -117,8 +117,11 @@ def filter_subset(subset, cols):
     for obs in subset:
 
         data_return += [obs[attr] for attr in cols]
+        # add line to add more attributes
 
     return data_return
+
+#def 
 
 def test_set_brute_force(
     data_dic,
@@ -259,11 +262,14 @@ def train_set_brute_force(
             prediction_freq
         )
 
-        i_X = len(df_X)
-        row_X = filter_subset(subset, price_cols)
-        df_X.loc[i_X] = row_X
-
         if label is not None: # only append if label is not None
+
+            # X dataset:
+            i_X = len(df_X)
+            row_X = filter_subset(subset, price_cols)
+            df_X.loc[i_X] = row_X
+
+            # Y dataset:
             i_Y = len(df_Y)
             row_Y = [current_str, label]
             df_Y.loc[i_Y] = row_Y
