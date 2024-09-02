@@ -46,14 +46,11 @@ def train(dataset, model, optimizer, epoch=None, loss_file=None, accuracy_file=N
 		if loss_file:
 			losses.append([int(epoch), int(idx), loss.item()])
 
-	# Saving model and loss results
-	if net_file:
-		torch.save(model, net_file)
 	#if loss_file:
-    #    with open(loss_file, 'a', newline='') as file:
-    #        writer = csv.writer(file)
-    #        for loss_row in losses:
-    #            writer.writerow(loss_row)
+		#with open(loss_file, 'a', newline='') as file:
+			#writer = csv.writer(file)
+			#for loss_row in losses:
+				#writer.writerow(loss_row)
 
 	if epoch % 10 == 0:
 
@@ -66,20 +63,29 @@ def train(dataset, model, optimizer, epoch=None, loss_file=None, accuracy_file=N
 
 		print(f'Epoch: {epoch}\n\tTrain loss: {loss:.5f}, train accuracy: {accuracy:.2f}')
 
+	# Saving model and loss results
+	if epoch % 100 == 0 and net_file:
+		torch.save(model, net_file)
+
 def main():
 
-	# model = nets.net1().float()
-	model_path = '../models/torch-net-20240622.pkl'
-	model = torch.load(model_path)
-	optimizer = optim.Adam(params=model.parameters(), lr=1e-3)
+	#model = nets.net1().float()
+	#model_path = '../models/torch-net-20240622.pkl'
+	#model = torch.load(model_path)
+	model = torch.load('../models/torch-net-20240623.pkl')
+	#optimizer = optim.Adam(params=model.parameters(), lr=1e-2)
+	#optimizer = optim.Adam(params=model.parameters(), lr=1e-3)
+	#optimizer = optim.SGD(params=model.parameters(), lr=1e-3, momentum=0.9)
+	optimizer = optim.Adam(params=model.parameters(), lr=0.0005)
 	dataset = loader.cryptoData()
 	data = DataLoader(dataset, batch_size=100, shuffle=True, num_workers=10)
-	epochs = 10000
-	model_path = '../models/torch-net-20240622.pkl'
+	epochs = 50000
+	model_path = '../models/torch-net-20240623.pkl'
+	loss_file = '../data/results/loss_torch-net-20240623.csv'
 
 	# Training
 	for epoch in range(epochs):
-		train(data, model, optimizer, epoch, net_file = model_path)
+		train(data, model, optimizer, epoch, net_file = model_path, loss_file=loss_file)
 
 if __name__ == '__main__':
 	if torch.cuda.is_available():
